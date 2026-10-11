@@ -151,6 +151,9 @@ body::before {
 .js .reveal.is-visible { opacity: 1; transform: none; }
 /* 保險：一段時間後一律顯示（不透過動畫，直接顯示） */
 .js .reveal.force-show { opacity: 1 !important; transform: none !important; transition: none !important; }
+/* anime.js 接手的元素：關掉原本的 reveal 淡入，避免兩套動畫疊在一起（anime-fx.js 載入成功才會有 .anime-on） */
+.js.anime-on .section-title.reveal { opacity: 1; transform: none; }
+.anime-on .btn { transition: background .3s, color .3s, border-color .3s; }
 
 /* ===== HERO ===== */
 .hero {

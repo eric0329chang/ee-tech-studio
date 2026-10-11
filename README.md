@@ -10,6 +10,7 @@ ee-tech-studio/
 ├── favicon.svg       ← 分頁圖示
 ├── css/style.css     ← 顏色 / 字體 / 尺寸都在最上面的 :root
 ├── js/main.js        ← 捲動動畫 + 聯絡表單送出（Lenis + GSAP，走 CDN）
+├── js/anime-fx.js    ← anime.js 加分效果：標題逐字、插圖描線、標籤彈出、按鈕磁吸
 ├── js/playground.js  ← 實驗室三個小遊戲（純 JS，無函式庫）
 └── README.md
 ```
@@ -61,5 +62,5 @@ npx serve .
 
 ## 說明
 
-- 動畫函式庫（GSAP、Lenis）走 CDN。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
+- 動畫函式庫（GSAP、Lenis、anime.js 4.5）走 CDN。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
 - 支援深色、RWD、`prefers-reduced-motion`（使用者若關閉動效會自動停用）。
