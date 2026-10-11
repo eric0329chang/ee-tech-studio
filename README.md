@@ -12,6 +12,7 @@ ee-tech-studio/
 ├── js/main.js        ← 捲動動畫 + 聯絡表單送出（Lenis + GSAP，走 CDN）
 ├── js/anime-fx.js    ← anime.js：標題逐字、插圖描線、標籤彈出、數字計數
 ├── js/motion-fx.js   ← Motion（motion.dev）：進場、捲動進度條、作品圖展開、逐字亮起、卡片傾斜、按鈕磁吸
+├── js/three-fx.js    ← Three.js 3D 背景：首頁與聯絡區的流動球 + 粒子（頁面載完才載入；關閉動效 / 省流量 / 不支援 WebGL 時不顯示）
 ├── js/playground.js  ← 實驗室三個小遊戲（純 JS，無函式庫）
 └── README.md
 ```
@@ -65,5 +66,5 @@ npx serve .
 
 ## 說明
 
-- 動畫函式庫（GSAP、Lenis、anime.js 4.5、Motion 13.4）走 CDN。進場動畫每次捲回來都會重播。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
+- 動畫函式庫（GSAP、Lenis、anime.js 4.5、Motion 13.4、Three.js 0.186）走 CDN。進場動畫每次捲回來都會重播。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
 - 支援深色、RWD、`prefers-reduced-motion`（使用者若關閉動效會自動停用）。
