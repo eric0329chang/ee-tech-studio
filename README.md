@@ -10,7 +10,8 @@ ee-tech-studio/
 ├── favicon.svg       ← 分頁圖示
 ├── css/style.css     ← 顏色 / 字體 / 尺寸都在最上面的 :root
 ├── js/main.js        ← 捲動動畫 + 聯絡表單送出（Lenis + GSAP，走 CDN）
-├── js/anime-fx.js    ← anime.js 加分效果：標題逐字、插圖描線、標籤彈出、按鈕磁吸
+├── js/anime-fx.js    ← anime.js：標題逐字、插圖描線、標籤彈出、數字計數
+├── js/motion-fx.js   ← Motion（motion.dev）：進場、捲動進度條、作品圖展開、逐字亮起、卡片傾斜、按鈕磁吸
 ├── js/playground.js  ← 實驗室三個小遊戲（純 JS，無函式庫）
 └── README.md
 ```
@@ -53,14 +54,16 @@ npx serve .
 | 實驗室小遊戲 | `js/playground.js` |
 | 聯絡表單欄位 / 選項 | `index.html` 的 `<form class="cform">` |
 
-## 聯絡表單（mailto）
+## 聯絡表單（FormSubmit）
 
-網站放在 GitHub Pages（純靜態、沒有後端），所以表單用 **mailto**：訪客按「用 Email 寄出」後，會打開他自己的郵件程式，收件人 `ee.techww@gmail.com`、主旨和內容（稱呼、聯絡方式、需求、預算、補充）都已填好，他按寄出才會真的送出。
+網站是純靜態（GitHub Pages），表單透過 **FormSubmit**（formsubmit.co，免費、不用註冊）直接寄到 `ee.techww@gmail.com`。
 
-- 收件信箱在 `js/main.js` 的 `TO`，以及 `index.html` 表單的 `action`（沒開 JS 時的備援）。
-- 訪客的裝置沒有設定郵件程式時不會寄出，頁面會提示直接寄信到信箱。
+1. **第一次啟用**：網站上線後自己送出一次表單，FormSubmit 會寄一封「Activate Form」信到 ee.techww@gmail.com，點信裡的連結開通。開通前送出的那筆不會轉寄。
+2. 之後每筆詢問都會變成一封表格格式的信，主旨是「[網站詢問] 類型－稱呼」。
+3. 收件信箱在 `js/main.js` 的 `TO`，和 `index.html` 表單的 `action`（沒開 JS 時的備援）。
+4. 表單內容會經過 FormSubmit 的伺服器轉寄。
 
 ## 說明
 
-- 動畫函式庫（GSAP、Lenis、anime.js 4.5）走 CDN。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
+- 動畫函式庫（GSAP、Lenis、anime.js 4.5、Motion 13.4）走 CDN。進場動畫每次捲回來都會重播。**萬一 CDN 載不到，網站會自動降級**成無動畫版，內容照常完整顯示。
 - 支援深色、RWD、`prefers-reduced-motion`（使用者若關閉動效會自動停用）。

@@ -55,8 +55,8 @@
     window.eeScrollTo = (target) => scrollToTarget(target);
     window.dispatchEvent(new Event('ee:ready'));
 
-    // 保險：3.5 秒後把第一屏還隱形的 reveal 強制顯示
-    setTimeout(() => {
+    // 保險：3.5 秒後把第一屏還隱形的 reveal 強制顯示（motion-fx.js 接手進場時由它自己負責）
+    if (!fxReveals()) setTimeout(() => {
       const vh = window.innerHeight;
       document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
         if (el.getBoundingClientRect().top < vh) el.classList.add('force-show');
@@ -139,7 +139,10 @@
   }
 
   /* ---------- 進場 reveal（IntersectionObserver） ---------- */
+  // motion-fx.js（Motion）有載到時，進場動畫改由它做（彈簧 + 模糊淡入、同時進畫面的依序出現）
+  function fxReveals() { return !!(window.EE_FX && window.EE_FX.reveals); }
   function setupReveals() {
+    if (fxReveals()) return;
     const items = document.querySelectorAll('.reveal');
     const contact = document.querySelector('.contact');
     if (!('IntersectionObserver' in window)) {
@@ -164,6 +167,7 @@
 
   /* ---------- 數字計數 ---------- */
   function setupCounters() {
+    if (window.EE_FX && window.EE_FX.counters) return; // anime-fx.js 接手
     const nums = document.querySelectorAll('.stat__num[data-count]');
     if (!nums.length) return;
     const run = (el) => {
@@ -205,35 +209,59 @@
     io.observe(el);
   }
 
-  /* ---------- 聯絡表單（mailto：組好信件內容，打開訪客的郵件程式） ---------- */
+  /* ---------- 聯絡表單（FormSubmit：送出後直接寄到 ee.techww@gmail.com，不用自己的後端） ----------
+     第一次有人送出時，FormSubmit 會先寄一封「Activate Form」信到信箱，點連結開通後才會開始轉寄。 */
   function setupContactForm() {
     const form = document.getElementById('cform');
     if (!form) return;
     const status = document.getElementById('cformStatus');
+    const btn = form.querySelector('button[type="submit"]');
     const TO = 'ee.techww@gmail.com';
+    const ENDPOINT = 'https://formsubmit.co/ajax/' + TO;
+
+    const show = (msg, ok) => {
+      if (!status) return;
+      status.textContent = msg;
+      status.hidden = false;
+      status.classList.toggle('is-ok', ok);
+      status.classList.toggle('is-err', !ok);
+    };
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const data = new FormData(form);
+      if (data.get('_honey')) return; // 蜜罐：機器人填了就默默不送
       const name = (data.get('name') || '').trim();
-      const subject = `[網站詢問] ${data.get('type')}－${name}`;
-      const body = [
-        `稱呼：${name}`,
-        `聯絡方式：${(data.get('contact') || '').trim()}`,
-        `想做什麼：${data.get('type')}`,
-        `預算範圍：${data.get('budget')}`,
-        '',
-        '想解決的問題 / 補充：',
-        (data.get('message') || '').trim() || '（無）',
-      ].join('\r\n');
+      const payload = {
+        稱呼: name,
+        聯絡方式: (data.get('contact') || '').trim(),
+        想做什麼: data.get('type'),
+        預算範圍: data.get('budget'),
+        '想解決的問題 / 補充': (data.get('message') || '').trim() || '（無）',
+        _subject: `[網站詢問] ${data.get('type')}－${name}`,
+        _template: 'table',
+        _captcha: 'false',
+      };
+      if (btn) { btn.disabled = true; btn.textContent = '送出中…'; }
 
-      window.location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-      if (status) {
-        status.textContent = `已經幫你打開郵件程式，確認內容後按寄出就完成了。沒有跳出來的話，可以直接寄信到 ${TO}`;
-        status.hidden = false;
-        status.classList.add('is-ok');
-      }
+      fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then((r) => r.json().catch(() => ({})).then((j) => ({ ok: r.ok, j })))
+        .then(({ ok, j }) => {
+          if (ok && String(j.success) === 'true') {
+            form.reset();
+            show('收到了！我們會用你留的方式回覆，通常一到兩個工作天內。', true);
+          } else if (/activat/i.test(j.message || '')) {
+            show(`表單正在開通中，這次可能沒送到。請先直接寄信到 ${TO}，謝謝！`, false);
+          } else {
+            throw new Error(j.message || 'send failed');
+          }
+        })
+        .catch(() => show(`送出失敗，你也可以直接寄信到 ${TO}`, false))
+        .finally(() => { if (btn) { btn.disabled = false; btn.textContent = '送出需求'; } });
     });
   }
 
