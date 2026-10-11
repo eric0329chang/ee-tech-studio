@@ -11,14 +11,36 @@
 (function () {
   'use strict';
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (navigator.connection && navigator.connection.saveData) return;
+  // 診斷：網址加 ?3d=debug，右下角會顯示 3D 目前的狀態（看不到球時用來查原因）
+  const DEBUG = /[?&]3d=debug(?:&|$)/.test(location.search);
+  function report(msg) {
+    document.documentElement.dataset.three = msg;
+    if (!DEBUG) return;
+    const show = () => {
+      let b = document.getElementById('three-debug');
+      if (!b) {
+        b = document.createElement('div');
+        b.id = 'three-debug';
+        b.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:9999;padding:8px 12px;border-radius:10px;background:#c5f04a;color:#0a0b0e;font:13px/1.4 system-ui,sans-serif;max-width:80vw';
+        document.body.appendChild(b);
+      }
+      b.textContent = '3D：' + msg;
+    };
+    if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { report('系統設定「減少動態效果」開著，所以不顯示'); return; }
+  if (navigator.connection && navigator.connection.saveData) { report('省流量模式開著，所以不顯示'); return; }
   const probe = document.createElement('canvas');
-  if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) return;
+  if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) { report('這個瀏覽器不能用 WebGL（可能被瀏覽器防護或顯示卡設定擋掉）'); return; }
 
   const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js';
 
-  const start = () => import(THREE_URL).then(init).catch(() => { /* 載不到就算了 */ });
+  report('等頁面載完再載入 3D…');
+  const start = () => {
+    report('正在載入 Three.js…');
+    import(THREE_URL).then(init).catch((e) => report('Three.js 載不到：' + (e && e.message || e)));
+  };
   const whenIdle = () => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 2500 }) : setTimeout(start, 600));
   if (document.readyState === 'complete') whenIdle();
   else window.addEventListener('load', whenIdle, { once: true });
@@ -59,7 +81,7 @@
     let renderer;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-    } catch (e) { canvas.remove(); return; }
+    } catch (e) { canvas.remove(); report('建立 WebGL 失敗：' + (e && e.message || e)); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     renderer.setClearColor(0x000000, 0);
 
@@ -230,6 +252,7 @@
     }
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { prev = performance.now(); schedule(); } });
     canvas.classList.add('is-ready');
+    report('正常運作中（' + (renderer.capabilities.isWebGL2 ? 'WebGL2' : 'WebGL1') + '）');
     schedule();
   }
 })();
