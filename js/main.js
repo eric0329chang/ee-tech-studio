@@ -15,6 +15,9 @@
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // 表單不等進場動畫，一載入就接手（不然會走 HTML 的 mailto 備援，中文會變亂碼）
+  setupContactForm();
+
   /* ---------- 進場載入（一定會收起，最多 2.8 秒） ---------- */
   const loader = document.getElementById('loader');
   let loaderDone = false;
@@ -44,7 +47,6 @@
     setupReveals();
     setupCounters();
     setupAboutText();
-    setupContactForm();
     setupGsapExtras();
 
     // 讓其他獨立載入的 script（例如 playground.js）知道 Lenis 已經接手捲動，
@@ -203,43 +205,35 @@
     io.observe(el);
   }
 
-  /* ---------- 聯絡表單（Netlify Forms，AJAX 送出、留在原頁） ---------- */
+  /* ---------- 聯絡表單（mailto：組好信件內容，打開訪客的郵件程式） ---------- */
   function setupContactForm() {
     const form = document.getElementById('cform');
     if (!form) return;
     const status = document.getElementById('cformStatus');
-    const btn = form.querySelector('button[type="submit"]');
-
-    const show = (msg, ok) => {
-      if (!status) return;
-      status.textContent = msg;
-      status.hidden = false;
-      status.classList.toggle('is-ok', ok);
-      status.classList.toggle('is-err', !ok);
-    };
+    const TO = 'ee.techww@gmail.com';
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const data = new FormData(form);
-      if (data.get('bot-field')) return;          // 蜜罐：機器人填了就默默不送
-      if (btn) { btn.disabled = true; btn.textContent = '送出中…'; }
+      const name = (data.get('name') || '').trim();
+      const subject = `[網站詢問] ${data.get('type')}－${name}`;
+      const body = [
+        `稱呼：${name}`,
+        `聯絡方式：${(data.get('contact') || '').trim()}`,
+        `想做什麼：${data.get('type')}`,
+        `預算範圍：${data.get('budget')}`,
+        '',
+        '想解決的問題 / 補充：',
+        (data.get('message') || '').trim() || '（無）',
+      ].join('\r\n');
 
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data).toString(),
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error(r.status);
-          form.reset();
-          show('收到了！我們會用你留的方式回覆，通常一到兩個工作天內。', true);
-        })
-        .catch(() => {
-          show('送出失敗，你也可以直接寄信到 ee.techww@gmail.com', false);
-        })
-        .finally(() => {
-          if (btn) { btn.disabled = false; btn.textContent = '送出需求'; }
-        });
+      window.location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      if (status) {
+        status.textContent = `已經幫你打開郵件程式，確認內容後按寄出就完成了。沒有跳出來的話，可以直接寄信到 ${TO}`;
+        status.hidden = false;
+        status.classList.add('is-ok');
+      }
     });
   }
 

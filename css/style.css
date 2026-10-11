@@ -115,10 +115,13 @@ body::before {
   .nav__links {
     position: fixed; inset: 0; background: var(--bg);
     flex-direction: column; justify-content: center; gap: 28px;
-    transform: translateY(-100%); transition: transform .5s cubic-bezier(.7,0,.2,1);
+    transform: translateY(-100%); visibility: hidden;
+    transition: transform .5s cubic-bezier(.7,0,.2,1), visibility 0s .5s;
   }
+  /* backdrop-filter 會讓 fixed 的選單只撐滿 nav 本身的高度，手機版改用不透明底色 */
+  .nav--scrolled { backdrop-filter: none; background: rgba(10, 10, 13, 0.94); }
   .nav__links a { font-size: 22px; }
-  .nav--open .nav__links { transform: translateY(0); }
+  .nav--open .nav__links { transform: translateY(0); visibility: visible; transition-delay: 0s; }
   .nav--open .nav__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .nav--open .nav__burger span:nth-child(2) { transform: translateY(-7px) rotate(-45deg); }
 }
@@ -700,7 +703,7 @@ body::before {
   max-width: 620px; margin: 52px auto 0; text-align: left;
   display: flex; flex-direction: column; gap: 18px;
 }
-.cform__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cform__note { font-size: 13px; opacity: 0.7; margin: -4px 0 0; }
 .cform__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 560px) { .cform__row { grid-template-columns: 1fr; } }
 .cfield { display: flex; flex-direction: column; gap: 8px; }

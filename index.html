@@ -415,11 +415,7 @@
         <span class="line"><span>寄給<em>我們</em></span></span>
       </h2>
 
-      <form class="cform" name="contact" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" id="cform">
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="cform__hp" aria-hidden="true">
-          <label>請留空 <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
-        </p>
+      <form class="cform" name="contact" method="POST" action="mailto:ee.techww@gmail.com" enctype="text/plain" id="cform">
         <div class="cform__row">
           <label class="cfield">
             <span>稱呼 *</span>
@@ -457,7 +453,8 @@
           <span>想解決的問題 / 補充</span>
           <textarea name="message" rows="4" placeholder="簡單描述你的需求、預計時間、有沒有參考網站…"></textarea>
         </label>
-        <button type="submit" class="btn btn--solid cform__submit" data-hover>送出需求</button>
+        <button type="submit" class="btn btn--solid cform__submit" data-hover>用 Email 寄出</button>
+        <p class="cform__note">按下後會打開你的郵件程式，內容已幫你填好，確認後寄出即可。</p>
         <p class="cform__status" id="cformStatus" hidden></p>
       </form>
 

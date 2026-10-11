@@ -33,7 +33,8 @@ npx serve .
 
 - **Netlify**：拖資料夾到 https://app.netlify.com/drop
 - **Cloudflare Pages**：Create → Upload assets → 選資料夾
-- **Vercel / Surge / GitHub Pages** 也都可以
+- **GitHub Pages**（目前用這個）：推到 GitHub 的 `main`，Pages 會自動更新
+- **Vercel / Surge** 也都可以
 
 沒有路由設定要處理（單頁 + 錨點）。
 
@@ -51,13 +52,12 @@ npx serve .
 | 實驗室小遊戲 | `js/playground.js` |
 | 聯絡表單欄位 / 選項 | `index.html` 的 `<form class="cform">` |
 
-## 聯絡表單（Netlify Forms）
+## 聯絡表單（mailto）
 
-表單走 **Netlify Forms**，不需要後端。佈署到 Netlify 後：
+網站放在 GitHub Pages（純靜態、沒有後端），所以表單用 **mailto**：訪客按「用 Email 寄出」後，會打開他自己的郵件程式，收件人 `ee.techww@gmail.com`、主旨和內容（稱呼、聯絡方式、需求、預算、補充）都已填好，他按寄出才會真的送出。
 
-1. 進站台 → **Forms** 分頁，會看到名為 `contact` 的表單（要有人送出過一次才會出現）。
-2. **Forms → Settings → Form notifications → Add notification → Email**，填你的信箱，之後每筆詢問都會寄信通知。
-3. 本機預覽時送出會失敗（沒有 Netlify 後端），屬正常；佈署後才會動。
+- 收件信箱在 `js/main.js` 的 `TO`，以及 `index.html` 表單的 `action`（沒開 JS 時的備援）。
+- 訪客的裝置沒有設定郵件程式時不會寄出，頁面會提示直接寄信到信箱。
 
 ## 說明
 
