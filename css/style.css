@@ -387,8 +387,6 @@ body::before {
 .wcard__more { display: inline-block; margin-top: 22px; font-size: 14px; letter-spacing: 0.04em; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
 .wcard--rev { grid-template-columns: 1fr 1.1fr; }
 .wcard--rev .wcard__media { order: 2; }
-.wcard--placeholder { opacity: 0.6; }
-.wcard--placeholder .wcard__body { grid-column: 1 / -1; }
 @media (max-width: 820px) {
   .wcard, .wcard--rev { grid-template-columns: 1fr; gap: 24px; }
   .wcard--rev .wcard__media { order: 0; }
@@ -431,8 +429,6 @@ body::before {
 }
 .member h4 { font-family: var(--display); font-weight: 600; font-size: 19px; margin-bottom: 8px; }
 .member p { color: var(--text-dim); font-size: 14px; }
-.team__note { margin-top: 30px; font-size: 13px; color: var(--text-dim); }
-.team__note code { font-family: var(--display); background: var(--surface); padding: 2px 8px; border-radius: 6px; }
 @media (max-width: 900px) { .team__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .team__grid { grid-template-columns: 1fr; } }
 
