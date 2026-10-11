@@ -5,20 +5,19 @@
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EE Tech Studio — 客製化網站・互動遊戲・視覺美編・數據分析</title>
-  <meta name="description" content="EE Tech Studio 是一間專注於互動體驗的數位工作室。提供客製化網站開發、網頁小遊戲製作、視覺美編與後續維護，以及針對未知客群的數據分析。" />
+  <meta name="description" content="EE Tech Studio 是一間專注於互動體驗的數位工作室：客製化網站開發、網頁小遊戲、視覺美編與後續維護、客群數據分析，從 0 到上線一站完成。" />
   <meta property="og:title" content="EE Tech Studio" />
   <meta property="og:description" content="把想法變成會動的產品 — 網站・遊戲・視覺・數據，一站到位。" />
   <meta property="og:type" content="website" />
-
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=202610112009" />
-  <link rel="apple-touch-icon" href="./favicon.svg?v=202610112009" />
-  <meta name="theme-color" content="#0a0b0e" />
+  <meta name="theme-color" content="#08090b" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=202610112043" />
+  <link rel="apple-touch-icon" href="./favicon.svg?v=202610112043" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/style.css?v=202610112009" />
-  <!-- three-fx.js 用的 Three.js 模組位置（3D 精密機械） -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/style.css?v=202610112043" />
+  <!-- machine.js（3D）用的 Three.js 模組位置 -->
   <script type="importmap">
     { "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
@@ -27,167 +26,124 @@
   </script>
 </head>
 <body>
-  <!-- 進場載入 -->
-  <div class="loader" id="loader">
-    <span class="loader__text">EE&nbsp;TECH&nbsp;STUDIO</span>
+  <!-- 開場 -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__row"><span class="intro__brand">EE — TECH STUDIO</span><span class="intro__count" id="introCount">000</span></div>
+    <div class="intro__bar"><span id="introBar"></span></div>
   </div>
 
-  <!-- 自訂游標 -->
-  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
 
-  <!-- 導覽列 -->
+  <!-- 導覽 -->
   <header class="nav" id="nav">
-    <a href="#top" class="nav__logo" data-hover>EE<span>·</span>TECH</a>
-    <nav class="nav__links" id="navLinks">
-      <a href="#about" data-hover>關於我們</a>
-      <a href="#services" data-hover>服務</a>
-      <a href="#work" data-hover>作品</a>
-      <a href="#lab" data-hover>實驗室</a>
-      <a href="#stack" data-hover>技術</a>
-      <a href="#team" data-hover>團隊</a>
-      <a href="#contact" class="nav__cta" data-hover>聯絡我們</a>
-    </nav>
-    <button class="nav__burger" id="burger" aria-label="選單">
-      <span></span><span></span>
-    </button>
+    <a href="#top" class="nav__logo" data-scroll>EE<span>—</span>TECH</a>
+    <div class="nav__chapter" aria-hidden="true"><span id="chapNo">00</span><i></i><span id="chapName">開場</span></div>
+    <div class="nav__right">
+      <a href="#contact" class="nav__cta" data-scroll>聯絡我們</a>
+      <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="nav__menu-label">選單</span><span class="nav__menu-icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
   </header>
+
+  <!-- 全螢幕選單 -->
+  <nav class="menu" id="menu" aria-label="章節" hidden>
+    <ol class="menu__list">
+      <li><a href="#top" data-scroll><span>00</span>開場</a></li>
+      <li><a href="#services" data-scroll><span>01</span>服務</a></li>
+      <li><a href="#work" data-scroll><span>02</span>作品</a></li>
+      <li><a href="#process" data-scroll><span>03</span>合作流程</a></li>
+      <li><a href="#team" data-scroll><span>04</span>團隊與技術</a></li>
+      <li><a href="#contact" data-scroll><span>05</span>聯絡</a></li>
+    </ol>
+    <div class="menu__foot">
+      <a href="mailto:ee.techww@gmail.com">ee.techww@gmail.com</a>
+      <a href="https://instagram.com/ee.techww" target="_blank" rel="noopener">@ee.techww</a>
+    </div>
+  </nav>
+
+  <!-- 右側章節進度 -->
+  <div class="rail" aria-hidden="true">
+    <span class="rail__fill" id="railFill"></span>
+  </div>
 
   <main id="top">
 
-    <!-- ===== HERO ===== -->
-    <section class="hero" id="hero">
-      <div class="hero__bg" aria-hidden="true">
-        <div class="blob blob--1" data-parallax data-speed="0.25"></div>
-        <div class="blob blob--2" data-parallax data-speed="-0.18"></div>
-        <div class="grid-lines" data-parallax data-speed="0.08"></div>
+    <!-- ===== 00 開場 ===== -->
+    <section class="chapter hero" id="hero" data-chapter="00" data-name="開場">
+      <div class="hero__top">
+        <p class="kicker"><span>00</span>互動體驗數位工作室</p>
       </div>
-
-      <div class="hero__inner">
-        <p class="hero__eyebrow reveal">互動體驗數位工作室</p>
-        <h1 class="hero__title">
-          <span class="line"><span>把想法</span></span>
-          <span class="line"><span>變成<em>會動</em>的</span></span>
-          <span class="line"><span>產品</span></span>
-        </h1>
-        <p class="hero__sub reveal">
-          網站開發・網頁小遊戲・視覺美編・客群數據分析 —— 從 0 到上線，一站到位。
-        </p>
-        <div class="hero__actions reveal">
-          <a href="#services" class="btn btn--solid" data-hover>看我們能做什麼</a>
-          <a href="#contact" class="btn btn--ghost" data-hover>直接聊聊</a>
+      <h1 class="hero__title" data-split>
+        <span class="row">把想法</span>
+        <span class="row">變成<em>會動</em>的</span>
+        <span class="row">產品</span>
+      </h1>
+      <div class="hero__bottom">
+        <p class="hero__lead" data-reveal>網站開發、網頁小遊戲、視覺美編、客群數據分析 —— 工程、設計與數據綁在一起，從 0 到上線一次做好。</p>
+        <div class="hero__actions" data-reveal>
+          <a href="#services" class="btn btn--solid" data-scroll>往下看我們做什麼<span aria-hidden="true">↓</span></a>
+          <a href="#contact" class="btn btn--line" data-scroll>直接聊聊</a>
         </div>
       </div>
-
-      <div class="hero__scroll reveal" aria-hidden="true">
-        <span>向下捲動</span>
-        <span class="hero__scroll-line"></span>
+      <div class="hero__meta" aria-hidden="true">
+        <span>WEB</span><span>GAME</span><span>VISUAL</span><span>DATA</span>
       </div>
+      <div class="scrollcue" aria-hidden="true"><span>SCROLL</span><i></i></div>
     </section>
 
-    <!-- ===== 跑馬燈 ===== -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track" id="marqueeTrack">
-        <span>客製化網站</span><span>◆</span><span>互動小遊戲</span><span>◆</span>
-        <span>視覺美編</span><span>◆</span><span>後續維護</span><span>◆</span>
-        <span>客群數據分析</span><span>◆</span>
-        <span>客製化網站</span><span>◆</span><span>互動小遊戲</span><span>◆</span>
-        <span>視覺美編</span><span>◆</span><span>後續維護</span><span>◆</span>
-        <span>客群數據分析</span><span>◆</span>
-      </div>
-    </div>
-
-    <!-- ===== ABOUT ===== -->
-    <section class="about" id="about">
-      <div class="about__label reveal">關於 EE Tech Studio</div>
-      <p class="about__big" id="aboutBig">
-        我們是一群把<em>工程</em>、<em>設計</em>與<em>數據</em>綁在一起做事的人。
-        接案子的時候不只交付一個網站，而是把「怎麼被使用、怎麼被記住、怎麼帶來客人」一起想進去。
-      </p>
-      <div class="about__stats">
-        <div class="stat reveal">
-          <span class="stat__num" data-count="4">0</span>
-          <span class="stat__label">核心服務</span>
+    <!-- ===== 01 服務（捲動敘事：一步一個服務，3D 跟著拆開） ===== -->
+    <section class="chapter story" id="services" data-chapter="01" data-name="服務">
+      <div class="story__sticky">
+        <div class="story__head">
+          <p class="kicker"><span>01</span>我們提供的服務</p>
+          <p class="story__count"><span id="stepNo">01</span> / 04</p>
         </div>
-        <div class="stat reveal">
-          <span class="stat__num" data-count="100" data-suffix="%">0</span>
-          <span class="stat__label">客製化開發</span>
+
+        <div class="story__steps">
+          <article class="step is-active" data-step="0">
+            <p class="step__no">01</p>
+            <h2 class="step__title">客製化網站開發</h2>
+            <p class="step__desc">品牌官網、線上點餐、預約與訂單系統 —— 前後端全包，響應式、好維護，交給你之後改字改圖都不用求人。</p>
+            <ul class="step__list"><li>形象網站 / 產品官網</li><li>點餐・預約・訂單系統</li><li>金流串接與雲端部署</li></ul>
+          </article>
+          <article class="step" data-step="1">
+            <p class="step__no">02</p>
+            <h2 class="step__title">互動小遊戲製作</h2>
+            <p class="step__desc">網頁小遊戲、活動抽獎、品牌互動 —— 讓人「玩過就記得」，順便留下名單與數據。</p>
+            <ul class="step__list"><li>活動 / 行銷小遊戲</li><li>互動抽獎與集點</li><li>可嵌入官網或 LINE</li></ul>
+          </article>
+          <article class="step" data-step="2">
+            <p class="step__no">03</p>
+            <h2 class="step__title">視覺美編與後續維護</h2>
+            <p class="step__desc">介面設計、品牌視覺、內容排版；上線後持續優化、修正、加功能，不是做完就消失。</p>
+            <ul class="step__list"><li>UI / UX 介面設計</li><li>品牌視覺與素材</li><li>長期維護與改版</li></ul>
+          </article>
+          <article class="step" data-step="3">
+            <p class="step__no">04</p>
+            <h2 class="step__title">客群數據分析</h2>
+            <p class="step__desc">誰來、從哪來、看了什麼、為什麼離開 —— 把行為變成看得懂的數字，找到對的客人。</p>
+            <ul class="step__list"><li>流量與行為追蹤建置</li><li>客群輪廓與分眾</li><li>看得懂的成效報表</li></ul>
+          </article>
         </div>
-        <div class="stat reveal">
-          <span class="stat__num" data-count="16" data-suffix="h">0</span>
-          <span class="stat__label">上線後支援</span>
-        </div>
-      </div>
-    </section>
 
-    <!-- ===== SERVICES（水平捲動 pin） ===== -->
-    <section class="services" id="services">
-      <div class="services__intro">
-        <h2 class="section-title reveal">我們提供的服務</h2>
-        <p class="reveal">四條線，串成一個完整的數位產品。</p>
-      </div>
-
-      <div class="services__pin" id="servicesPin">
-        <div class="services__track" id="servicesTrack">
-
-          <article class="scard" data-hover>
-            <span class="scard__no">01</span>
-            <h3>客製化網站開發</h3>
-            <p>品牌官網、線上點餐、後台系統 —— 前後端全包，響應式、好維護，交給你之後改字改圖都不用求人。</p>
-            <ul>
-              <li>形象網站 / 產品官網</li>
-              <li>點餐・預約・訂單系統</li>
-              <li>金流串接與雲端部署</li>
-            </ul>
-            <a href="#contact" class="scard__more" data-hover>了解更多 →</a>
-          </article>
-
-          <article class="scard" data-hover>
-            <span class="scard__no">02</span>
-            <h3>互動小遊戲製作</h3>
-            <p>網頁小遊戲、活動抽獎、品牌互動裝置 —— 讓使用者「玩過就記得」，順便留下名單與數據。</p>
-            <ul>
-              <li>活動 / 行銷小遊戲</li>
-              <li>互動抽獎與集點</li>
-              <li>可嵌入官網或 LINE</li>
-            </ul>
-            <a href="#contact" class="scard__more" data-hover>了解更多 →</a>
-          </article>
-
-          <article class="scard" data-hover>
-            <span class="scard__no">03</span>
-            <h3>視覺美編與後續服務</h3>
-            <p>從介面設計、視覺識別到內容排版，上線後也持續幫你優化、修正、加功能，不是做完就消失。</p>
-            <ul>
-              <li>UI / UX 介面設計</li>
-              <li>品牌視覺與素材</li>
-              <li>長期維護與改版</li>
-            </ul>
-            <a href="#contact" class="scard__more" data-hover>了解更多 →</a>
-          </article>
-
-          <article class="scard" data-hover>
-            <span class="scard__no">04</span>
-            <h3>客群數據分析</h3>
-            <p>針對還不清楚的客群做行為分析 —— 誰來、從哪來、看了什麼、為什麼離開，用數據找到對的人。</p>
-            <ul>
-              <li>流量與行為追蹤建置</li>
-              <li>客群輪廓與分眾</li>
-              <li>可讀懂的成效報表</li>
-            </ul>
-            <a href="#contact" class="scard__more" data-hover>了解更多 →</a>
-          </article>
-
+        <div class="story__progress" aria-hidden="true">
+          <span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span>
         </div>
       </div>
     </section>
 
-    <!-- ===== WORK ===== -->
-    <section class="work" id="work">
-      <h2 class="section-title reveal">近期作品</h2>
-
-      <a class="wcard" href="https://eetech-fumu-demo.eric-chang0329.workers.dev/" target="_blank" rel="noopener" data-hover>
-        <div class="wcard__media" data-parallax data-speed="0.12">
-          <svg class="wart" viewBox="0 0 400 300" role="img" aria-label="雲端點餐 POS 示意圖">
+    <!-- ===== 02 作品（橫向捲動） ===== -->
+    <section class="chapter work" id="work" data-chapter="02" data-name="作品">
+      <div class="work__sticky">
+        <div class="work__head">
+          <p class="kicker"><span>02</span>近期作品</p>
+          <p class="work__count"><span id="workNo">01</span> / 03</p>
+        </div>
+        <div class="work__track" id="workTrack">
+          <a class="wpanel" href="https://eetech-fumu-demo.eric-chang0329.workers.dev/" target="_blank" rel="noopener">
+            <div class="wpanel__art"><svg class="wart" viewBox="0 0 400 300" role="img" aria-label="雲端點餐 POS 示意圖">
             <defs>
               <linearGradient id="wa-pos" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#c5f04a"/><stop offset="1" stop-color="#4d7cff"/>
@@ -246,19 +202,16 @@
                 <path d="M16 4 q5 7 0 14 M30 0 q5 7 0 14" fill="none" stroke="#eef0f4" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
               </g>
             </g>
-          </svg>
-        </div>
-        <div class="wcard__body">
-          <span class="wcard__tag">網站開發 · 點餐系統 · 金流</span>
-          <h3>浮暮 FUMU — 雲端點餐 POS</h3>
-          <p>桌邊掃碼點餐、老闆中控台、LINE Pay 串接、即時出餐通知。前台文青風、後台一台平板就搞定。示範站可以直接點餐，網址後面加 #admin 就能看中控台（密碼 0000）。</p>
-          <span class="wcard__more">看線上示範 ↗</span>
-        </div>
-      </a>
-
-      <a class="wcard wcard--rev" href="https://eewwtech-studio.netlify.app/" target="_blank" rel="noopener" data-hover>
-        <div class="wcard__media" data-parallax data-speed="0.12">
-          <svg class="wart" viewBox="0 0 400 300" role="img" aria-label="烘焙店小遊戲 示意圖">
+          </svg></div>
+            <div class="wpanel__body">
+              <p class="wpanel__tag">網站開發 · 點餐系統 · 金流</p>
+              <h3 class="wpanel__title">浮暮 FUMU<br />雲端點餐 POS</h3>
+              <p class="wpanel__desc">桌邊掃碼點餐、老闆中控台、LINE Pay 串接、即時出餐通知。示範站可以直接點餐；網址後面加 #admin 看中控台（密碼 0000）。</p>
+              <span class="wpanel__more">看線上示範 ↗</span>
+            </div>
+          </a>
+          <a class="wpanel" href="https://eewwtech-studio.netlify.app/" target="_blank" rel="noopener">
+            <div class="wpanel__art"><svg class="wart" viewBox="0 0 400 300" role="img" aria-label="烘焙店小遊戲 示意圖">
             <defs>
               <linearGradient id="wa-bake" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#ffc061"/><stop offset="1" stop-color="#4d7cff"/>
@@ -292,19 +245,16 @@
               <path d="M0 42 L0 2"/>
               <path d="M0 8 q-9 -3 -11 -12 M0 8 q9 -3 11 -12 M0 20 q-9 -3 -11 -12 M0 20 q9 -3 11 -12 M0 32 q-9 -3 -11 -12 M0 32 q9 -3 11 -12"/>
             </g>
-          </svg>
-        </div>
-        <div class="wcard__body">
-          <span class="wcard__tag">互動小遊戲 · 品牌行銷</span>
-          <h3>為您烘焙每一天的美好 — 烘焙店小遊戲</h3>
-          <p>為烘焙店做的網頁小遊戲，把「烘焙的療癒感」變成可以玩的互動，讓顧客記得住這個品牌。</p>
-          <span class="wcard__more">開始玩 ↗</span>
-        </div>
-      </a>
-
-      <a class="wcard" href="https://huacan-shop-web.eric-chang0329.workers.dev/" target="_blank" rel="noopener" data-hover>
-        <div class="wcard__media" data-parallax data-speed="0.12">
-          <svg class="wart" viewBox="0 0 400 300" role="img" aria-label="咖啡電商網站 示意圖">
+          </svg></div>
+            <div class="wpanel__body">
+              <p class="wpanel__tag">互動小遊戲 · 品牌行銷</p>
+              <h3 class="wpanel__title">為您烘焙每一天的美好<br />烘焙店小遊戲</h3>
+              <p class="wpanel__desc">為烘焙店做的網頁小遊戲，把「烘焙的療癒感」變成可以玩的互動，讓顧客記得住這個品牌。</p>
+              <span class="wpanel__more">開始玩 ↗</span>
+            </div>
+          </a>
+          <a class="wpanel" href="https://huacan-shop-web.eric-chang0329.workers.dev/" target="_blank" rel="noopener">
+            <div class="wpanel__art"><svg class="wart" viewBox="0 0 400 300" role="img" aria-label="咖啡電商網站 示意圖">
             <defs>
               <linearGradient id="wa-shop" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#c5f04a"/><stop offset="1" stop-color="#4d7cff"/>
@@ -352,211 +302,109 @@
             </g>
             <path class="wart__spark" d="M46 120 l3.5 9 9 3.5 -9 3.5 -3.5 9 -3.5 -9 -9 -3.5 9 -3.5 z" fill="#c5f04a"/>
             <path class="wart__spark2" d="M344 210 l2.8 7 7 2.8 -7 2.8 -2.8 7 -2.8 -7 -7 -2.8 7 -2.8 z" fill="#7fd8ff"/>
-          </svg>
-        </div>
-        <div class="wcard__body">
-          <span class="wcard__tag">電商網站 · 會員 · 管理後台</span>
-          <h3>咖啡電商 — 線上商店＋店家後台</h3>
-          <p>商品、購物車、結帳、會員中心、訂單查詢，加上「口味推薦」小測驗；店家後台管訂單、庫存、商品與內容。示範站可以直接逛、加購物車試試看（第一次開可能要等幾秒喚醒）。</p>
-          <span class="wcard__more">看示範網站 ↗</span>
-        </div>
-      </a>
-    </section>
-
-    <!-- ===== 實驗室（小遊戲） ===== -->
-    <section class="lab" id="lab">
-      <div class="lab__head">
-        <h2 class="section-title reveal">實驗室</h2>
-        <p class="reveal">我們平常會做的小東西 —— 直接玩玩看。這些都是純網頁、沒有外掛，可以嵌進官網、活動頁或 LINE。</p>
-      </div>
-      <div class="lab__panel reveal">
-        <div class="lab__tabs" role="tablist" aria-label="小遊戲">
-          <button class="lab__tab is-active" type="button" data-game="reaction" data-hover>反應力測試</button>
-          <button class="lab__tab" type="button" data-game="aim" data-hover>手速點點看</button>
-          <button class="lab__tab" type="button" data-game="memory" data-hover>翻牌配對</button>
-          <button class="lab__tab" type="button" data-game="puzzle" data-hover>滑動拼圖</button>
-          <button class="lab__tab" type="button" data-game="2048" data-hover>2048</button>
-          <button class="lab__tab" type="button" data-game="stamp" data-hover>集點卡</button>
-          <button class="lab__tab" type="button" data-game="quiz" data-hover>服務測驗</button>
-          <button class="lab__tab" type="button" data-game="friend" data-hover>好友測驗</button>
-        </div>
-        <div class="lab__stage" id="labStage"></div>
-        <p class="lab__hint" id="labHint"></p>
-      </div>
-    </section>
-
-    <!-- ===== 技術棧 ===== -->
-    <section class="stack" id="stack">
-      <h2 class="section-title reveal">我們用什麼做</h2>
-      <p class="stack__intro reveal">工具是手段不是目的 —— 挑對的、穩的、之後好維護的。以下是常用的組合。</p>
-
-      <div class="stack__group reveal">
-        <div class="stack__gname">前端開發</div>
-        <div class="stack__tags">
-          <span class="stack__tag">React</span><span class="stack__tag">Vite</span>
-          <span class="stack__tag">JavaScript</span><span class="stack__tag">HTML5</span>
-          <span class="stack__tag">CSS3 / RWD</span>
-        </div>
-      </div>
-      <div class="stack__group reveal">
-        <div class="stack__gname">動畫與互動</div>
-        <div class="stack__tags">
-          <span class="stack__tag">GSAP</span><span class="stack__tag">ScrollTrigger</span>
-          <span class="stack__tag">Lenis</span><span class="stack__tag">Canvas</span>
-          <span class="stack__tag">SVG 動畫</span>
-        </div>
-      </div>
-      <div class="stack__group reveal">
-        <div class="stack__gname">後端與資料</div>
-        <div class="stack__tags">
-          <span class="stack__tag">Google Apps Script</span><span class="stack__tag">Google Sheets</span>
-          <span class="stack__tag">Node.js</span><span class="stack__tag">REST API</span>
-        </div>
-      </div>
-      <div class="stack__group reveal">
-        <div class="stack__gname">金流與整合</div>
-        <div class="stack__tags">
-          <span class="stack__tag">LINE Pay</span><span class="stack__tag">LINE Messaging</span>
-          <span class="stack__tag">Email 通知</span>
-        </div>
-      </div>
-      <div class="stack__group reveal">
-        <div class="stack__gname">部署與數據</div>
-        <div class="stack__tags">
-          <span class="stack__tag">Netlify</span><span class="stack__tag">Cloudflare Pages</span>
-          <span class="stack__tag">Git / GitHub</span><span class="stack__tag">GA4</span>
-          <span class="stack__tag">事件追蹤</span>
+          </svg></div>
+            <div class="wpanel__body">
+              <p class="wpanel__tag">電商網站 · 會員 · 管理後台</p>
+              <h3 class="wpanel__title">咖啡電商<br />線上商店＋店家後台</h3>
+              <p class="wpanel__desc">商品、購物車、結帳、會員中心、訂單查詢與口味推薦；店家後台管訂單、庫存與內容。第一次開可能要等幾秒喚醒。</p>
+              <span class="wpanel__more">看示範網站 ↗</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- ===== PROCESS ===== -->
-    <section class="process" id="process">
-      <h2 class="section-title reveal">合作流程</h2>
-      <ol class="process__list">
-        <li class="reveal"><span>01</span><h4>需求訪談</h4><p>先搞懂你想解決什麼，而不是急著報價。</p></li>
-        <li class="reveal"><span>02</span><h4>提案與報價</h4><p>給出範圍、時程、費用，白紙黑字。</p></li>
-        <li class="reveal"><span>03</span><h4>設計與開發</h4><p>分階段交付，過程看得到、改得動。</p></li>
-        <li class="reveal"><span>04</span><h4>測試上線</h4><p>多裝置實測，確認沒問題才上。</p></li>
-        <li class="reveal"><span>05</span><h4>後續維護</h4><p>上線只是開始，持續優化與支援。</p></li>
-      </ol>
-    </section>
-
-    <!-- ===== TEAM ===== -->
-    <section class="team" id="team">
-      <h2 class="section-title reveal">團隊</h2>
-      <p class="team__intro reveal">小而全能的組合，一個案子從頭到尾都是同一批人。</p>
-      <div class="team__grid">
-        <article class="member reveal" data-hover>
-          <div class="member__avatar"></div>
-          <h4>全端工程</h4>
-          <p>前後端、資料庫、雲端部署與金流串接。</p>
-        </article>
-        <article class="member reveal" data-hover>
-          <div class="member__avatar"></div>
-          <h4>視覺設計</h4>
-          <p>介面設計、品牌視覺、動態與素材產出。</p>
-        </article>
-        <article class="member reveal" data-hover>
-          <div class="member__avatar"></div>
-          <h4>遊戲開發</h4>
-          <p>網頁互動、小遊戲邏輯與體驗設計。</p>
-        </article>
-        <article class="member reveal" data-hover>
-          <div class="member__avatar"></div>
-          <h4>數據分析</h4>
-          <p>追蹤建置、客群分眾與成效解讀。</p>
-        </article>
+    <!-- ===== 03 合作流程 ===== -->
+    <section class="chapter process" id="process" data-chapter="03" data-name="合作流程">
+      <div class="process__sticky">
+        <p class="kicker"><span>03</span>合作流程</p>
+        <h2 class="big-title" data-split>五個步驟，<br />每一步都看得到。</h2>
+        <div class="process__line" aria-hidden="true"><span id="processFill"></span></div>
+        <ol class="process__steps">
+          <li><span class="process__no">01</span><h3>需求訪談</h3><p>先搞懂你想解決什麼，而不是急著報價。</p></li>
+          <li><span class="process__no">02</span><h3>提案與報價</h3><p>範圍、時程、費用，白紙黑字。</p></li>
+          <li><span class="process__no">03</span><h3>設計與開發</h3><p>分階段交付，過程看得到、改得動。</p></li>
+          <li><span class="process__no">04</span><h3>測試上線</h3><p>多裝置實測，確認沒問題才上線。</p></li>
+          <li><span class="process__no">05</span><h3>後續維護</h3><p>上線只是開始，持續優化與支援。</p></li>
+        </ol>
       </div>
     </section>
 
-    <!-- ===== CONTACT ===== -->
-    <section class="contact" id="contact">
-      <div class="contact__bg" aria-hidden="true">
-        <div class="blob blob--3" data-parallax data-speed="0.2"></div>
-      </div>
-      <p class="contact__label reveal">有想法了嗎？</p>
-      <h2 class="contact__title">
-        <span class="line"><span>把它</span></span>
-        <span class="line"><span>寄給<em>我們</em></span></span>
-      </h2>
-
-      <form class="cform" name="contact" method="POST" action="https://formsubmit.co/ee.techww@gmail.com" id="cform">
-        <input type="text" name="_honey" class="cform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <div class="cform__row">
-          <label class="cfield">
-            <span>稱呼 *</span>
-            <input type="text" name="name" required autocomplete="name" placeholder="怎麼稱呼你" />
-          </label>
-          <label class="cfield">
-            <span>聯絡方式 *</span>
-            <input type="text" name="contact" required placeholder="Email 或 IG / LINE" />
-          </label>
+    <!-- ===== 04 團隊與技術 ===== -->
+    <section class="chapter team" id="team" data-chapter="04" data-name="團隊與技術">
+      <div class="team__inner">
+        <div class="team__head">
+          <p class="kicker"><span>04</span>團隊與技術</p>
+          <h2 class="big-title" data-split>小而全能，<br />從頭到尾同一批人。</h2>
         </div>
-        <div class="cform__row">
-          <label class="cfield">
-            <span>想做什麼</span>
-            <select name="type">
-              <option>客製化網站</option>
-              <option>互動小遊戲</option>
-              <option>視覺美編</option>
-              <option>數據分析</option>
-              <option>還不確定，想先聊聊</option>
-            </select>
-          </label>
-          <label class="cfield">
-            <span>預算範圍</span>
-            <select name="budget">
-              <option>還在評估</option>
-              <option>1 萬以下</option>
-              <option>1–3 萬</option>
-              <option>3–8 萬</option>
-              <option>8–20 萬</option>
-              <option>20 萬以上</option>
-            </select>
-          </label>
+        <div class="team__grid">
+          <article class="role" data-reveal><span class="role__no">A</span><h3>全端工程</h3><p>前後端、資料庫、雲端部署與金流串接。</p></article>
+          <article class="role" data-reveal><span class="role__no">B</span><h3>視覺設計</h3><p>介面設計、品牌視覺、動態與素材產出。</p></article>
+          <article class="role" data-reveal><span class="role__no">C</span><h3>遊戲開發</h3><p>網頁互動、小遊戲邏輯與體驗設計。</p></article>
+          <article class="role" data-reveal><span class="role__no">D</span><h3>數據分析</h3><p>追蹤建置、客群分眾與成效解讀。</p></article>
         </div>
-        <label class="cfield">
-          <span>想解決的問題 / 補充</span>
-          <textarea name="message" rows="4" placeholder="簡單描述你的需求、預計時間、有沒有參考網站…"></textarea>
-        </label>
-        <button type="submit" class="btn btn--solid cform__submit" data-hover>送出需求</button>
-        <p class="cform__status" id="cformStatus" hidden></p>
-      </form>
-
-      <p class="contact__or reveal">或直接找我們</p>
-      <div class="contact__links reveal">
-        <a href="mailto:ee.techww@gmail.com" class="contact__link" data-hover>
-          <span class="contact__link-label">Email</span>
-          <span class="contact__link-value">ee.techww@gmail.com</span>
-        </a>
-        <a href="https://instagram.com/ee.techww" target="_blank" rel="noopener" class="contact__link" data-hover>
-          <span class="contact__link-label">Instagram</span>
-          <span class="contact__link-value">@ee.techww</span>
-        </a>
+      </div>
+      <div class="stack" aria-label="常用技術">
+        <div class="stack__row">
+          <div class="stack__track">
+            <span>React</span><span>Astro</span><span>Vite</span><span>Three.js</span><span>GSAP</span><span>WebGL</span><span>Canvas</span><span>CSS / RWD</span>
+            <span aria-hidden="true">React</span><span aria-hidden="true">Astro</span><span aria-hidden="true">Vite</span><span aria-hidden="true">Three.js</span><span aria-hidden="true">GSAP</span><span aria-hidden="true">WebGL</span><span aria-hidden="true">Canvas</span><span aria-hidden="true">CSS / RWD</span>
+          </div>
+        </div>
+        <div class="stack__row stack__row--rev">
+          <div class="stack__track">
+            <span>Node.js</span><span>PostgreSQL</span><span>REST API</span><span>Cloudflare Workers</span><span>Render</span><span>LINE Pay</span><span>GA4 事件追蹤</span><span>Google Sheets</span>
+            <span aria-hidden="true">Node.js</span><span aria-hidden="true">PostgreSQL</span><span aria-hidden="true">REST API</span><span aria-hidden="true">Cloudflare Workers</span><span aria-hidden="true">Render</span><span aria-hidden="true">LINE Pay</span><span aria-hidden="true">GA4 事件追蹤</span><span aria-hidden="true">Google Sheets</span>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ===== 05 聯絡 ===== -->
+    <section class="chapter contact" id="contact" data-chapter="05" data-name="聯絡">
+      <div class="contact__inner">
+        <div class="contact__left">
+          <p class="kicker"><span>05</span>有想法了嗎？</p>
+          <h2 class="contact__title" data-split><span class="row">把它</span><span class="row">寄給<em>我們</em></span></h2>
+          <div class="contact__links" data-reveal>
+            <a href="mailto:ee.techww@gmail.com"><span>Email</span>ee.techww@gmail.com</a>
+            <a href="https://instagram.com/ee.techww" target="_blank" rel="noopener"><span>Instagram</span>@ee.techww</a>
+          </div>
+        </div>
+
+        <form class="cform" name="contact" method="POST" action="https://formsubmit.co/ee.techww@gmail.com" id="cform" data-reveal>
+          <input type="text" name="_honey" class="cform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="cform__row">
+            <label class="cfield"><span>稱呼 *</span><input type="text" name="name" required autocomplete="name" placeholder="怎麼稱呼你" /></label>
+            <label class="cfield"><span>聯絡方式 *</span><input type="text" name="contact" required placeholder="Email 或 IG / LINE" /></label>
+          </div>
+          <div class="cform__row">
+            <label class="cfield"><span>想做什麼</span>
+              <select name="type"><option>客製化網站</option><option>互動小遊戲</option><option>視覺美編</option><option>數據分析</option><option>還不確定，想先聊聊</option></select>
+            </label>
+            <label class="cfield"><span>預算範圍</span>
+              <select name="budget"><option>還在評估</option><option>1 萬以下</option><option>1–3 萬</option><option>3–8 萬</option><option>8–20 萬</option><option>20 萬以上</option></select>
+            </label>
+          </div>
+          <label class="cfield"><span>想解決的問題 / 補充</span><textarea name="message" rows="4" placeholder="簡單描述你的需求、預計時間、有沒有參考網站…"></textarea></label>
+          <button type="submit" class="btn btn--solid cform__submit">送出需求<span aria-hidden="true">→</span></button>
+          <p class="cform__status" id="cformStatus" role="status" hidden></p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <div class="footer__row">
-      <span>EE Tech Studio</span>
-      <span>© <span id="year">2026</span> EE Tech Studio. All rights reserved.</span>
-    </div>
+    <span>EE Tech Studio</span>
+    <span>© <span id="year">2026</span> EE Tech Studio. All rights reserved.</span>
   </footer>
 
-  <!-- 動畫函式庫（CDN，載不到時網站仍可正常瀏覽） -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/motion@13.4.4/dist/motion.js"></script>
-  <!-- 動畫層要在 main.js 之前：main.js 看 window.EE_FX 決定進場 / 計數要不要交給它們 -->
-  <script src="./js/anime-fx.js?v=202610112009"></script>
-  <script src="./js/motion-fx.js?v=202610112009"></script>
-  <script src="./js/main.js?v=202610112009"></script>
-  <script src="./js/three-fx.js?v=202610112009"></script>
-  <script src="./js/playground.js?v=202610112009"></script>
+  <!-- 動畫：GSAP（捲動敘事、文字進場）＋ Lenis（平滑捲動）。載不到時網站照常可讀。 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+  <script src="./js/machine.js?v=202610112043"></script>
+  <script src="./js/main.js?v=202610112043"></script>
 </body>
 </html>
