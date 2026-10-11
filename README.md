@@ -12,7 +12,8 @@ ee-tech-studio/
 ├── js/main.js        ← 捲動動畫 + 聯絡表單送出（Lenis + GSAP，走 CDN）
 ├── js/anime-fx.js    ← anime.js：標題逐字、插圖描線、標籤彈出、數字計數
 ├── js/motion-fx.js   ← Motion（motion.dev）：進場、捲動進度條、作品圖展開、逐字亮起、卡片傾斜、按鈕磁吸
-├── js/three-fx.js    ← Three.js 3D 背景：首頁與聯絡區的流動球 + 粒子（頁面載完才載入；關閉動效 / 省流量 / 不支援 WebGL 時不顯示）
+├── js/three-fx.js    ← Three.js 3D 精密機械（行星齒輪減速機）：滑鼠靠近拆成爆炸圖 + 零件標註、離開組回去、可拖曳轉動；手機自動拆裝。
+│                        頁面載完才載入；關閉動效 / 省流量 / 不支援 WebGL 時不顯示；排查時看 <html data-three="…">
 ├── js/playground.js  ← 實驗室三個小遊戲（純 JS，無函式庫）
 └── README.md
 ```

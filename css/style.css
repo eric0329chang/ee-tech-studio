@@ -771,3 +771,23 @@ body::before {
   position: fixed; inset: 0; width: 100%; height: 100%;
   z-index: -1; pointer-events: none; opacity: 0;
 }
+
+/* 3D 爆炸圖的零件標註：錨點是零件旁邊的一個點，線朝模型方向畫回去 */
+.mech-labels { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; --lead: 120px; }
+.mech-label { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+.mech-label i {
+  position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 4px rgba(197,240,74,0.15);
+}
+.mech-label i::after {
+  content: ""; position: absolute; top: 2.5px; height: 1px; width: var(--lead);
+  right: 6px; background: linear-gradient(90deg, transparent, rgba(197,240,74,0.7));
+}
+.mech-label b {
+  position: absolute; left: 14px; top: -8px; white-space: nowrap;
+  font: 500 11px/16px var(--display); letter-spacing: .16em; color: var(--text);
+  padding: 0 8px; border: 1px solid var(--line); border-radius: 999px; background: rgba(10,11,14,0.6);
+}
+.mech-label--left i::after { right: auto; left: 6px; background: linear-gradient(270deg, transparent, rgba(197,240,74,0.7)); }
+.mech-label--left b { left: auto; right: 14px; }
+.mech-dragging, .mech-dragging * { cursor: grabbing !important; user-select: none; }
