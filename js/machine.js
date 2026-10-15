@@ -4,6 +4,9 @@
    馬達外殼、兩段行星齒輪、交叉滾子軸承、前蓋、輸出法蘭、內六角螺絲、主軸。
    畫面怎麼擺由 main.js 決定：它依捲動位置呼叫 window.EE_MACHINE.set({...})，
    這裡每一幀把目前狀態平滑地靠近目標。
+   直接操作（Apple 式）：用滑鼠按住機械可以轉動——貼著游標 1:1 跟著動、尊重你抓的位置；
+   放開時帶著你放手當下的速度繼續轉（速度交接），再用彈簧回到原位；超過轉動範圍會有橡皮筋式的阻力。
+   抓住正在回彈的機械可以立刻接手（可中斷）。只處理滑鼠 / 觸控筆；手機的手指留給捲動。
    保險：關閉動效、省流量、不支援 WebGL、CDN 載不到 → 不顯示，網站照常。
    'three' 的實際網址在 index.html 的 importmap。
    ============================================================= */
@@ -304,12 +307,118 @@
     resize();
     window.addEventListener('resize', resize);
 
-    /* ---------- 滑鼠：輕微視差 + 拖曳轉動 ---------- */
+    /* ---------- 滑鼠：輕微視差 + 拖曳轉動（速度交接、橡皮筋、彈簧回彈） ---------- */
     let mx = 0, my = 0;
+    // user.yaw / user.pitch：使用者拖出來的角度（疊加在章節決定的姿態上）；vel 是它們的速度（弧度 / 秒）
+    const user = { yaw: 0, pitch: 0, yawVel: 0, pitchVel: 0, dragging: false };
+    const YAW_LIMIT = 1.2, PITCH_LIMIT = 0.7;
+    const RAD_PER_PX = 0.0075;
+    let rawYaw = 0, rawPitch = 0;   // 沒套橡皮筋的原始拖曳量
+    let samples = [];               // 最近幾次 pointermove（時間、位置），放開時用來算速度
+    let overMachine = false;
+    let bounds = null;              // 機械在螢幕上的範圍（pointermove 時節流更新）
+    let boundsAt = 0;
+    const SKIP = 'a, button, input, textarea, select, label, summary, [role="button"], .menu, .cform';
+
+    // 橡皮筋：越過邊界越拉不動（Apple 的公式），整個物件像有彈性
+    const rubber = (x, limit) => {
+      const over = Math.abs(x) - limit;
+      if (over <= 0) return x;
+      const c = 0.55;
+      return Math.sign(x) * (limit + (over * limit * c) / (limit + c * over));
+    };
+    const inverseRubber = (y, limit) => { // 反推：目前顯示的角度對應的原始拖曳量（抓住回彈中的物件時要接續）
+      const over = Math.abs(y) - limit;
+      if (over <= 0) return y;
+      const c = 0.55;
+      const d = (over * limit) / (limit * c - c * over) ; // 解 over' = d：y-limit = (d*limit*c)/(limit+c*d)
+      return Math.sign(y) * (limit + (isFinite(d) && d > 0 ? d : over));
+    };
+    // 機械目前在螢幕上的範圍：把 3D 範圍框的 8 個角投影到螢幕
+    const box = new THREE.Box3();
+    const corner = new V3();
+    function updateBounds() {
+      boundsAt = performance.now();
+      if (cur.opacity < 0.5) { bounds = null; return; }
+      stage.updateMatrixWorld(true);
+      box.setFromObject(stage);
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (let i = 0; i < 8; i++) {
+        corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera);
+        const px = (corner.x * 0.5 + 0.5) * W, py = (-corner.y * 0.5 + 0.5) * H;
+        x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+      }
+      bounds = { x0: x0 - 8, y0: y0 - 8, x1: x1 + 8, y1: y1 + 8 };
+    }
+    const hit = (x, y) => !!bounds && x >= bounds.x0 && x <= bounds.x1 && y >= bounds.y0 && y <= bounds.y1;
+    const htmlEl = document.documentElement;
+
     window.addEventListener('pointermove', (e) => {
       if (e.pointerType === 'touch' || !Number.isFinite(e.clientX)) return;
       mx = e.clientX / W - 0.5; my = e.clientY / H - 0.5;
+      if (user.dragging) {
+        // 1:1 跟著游標：用「這次移動的距離」累加到原始拖曳量，再套橡皮筋
+        const last = samples[samples.length - 1];
+        rawYaw += (e.clientX - last.x) * RAD_PER_PX;
+        rawPitch += (e.clientY - last.y) * RAD_PER_PX;
+        user.yaw = rubber(rawYaw, YAW_LIMIT);
+        user.pitch = rubber(rawPitch, PITCH_LIMIT);
+        samples.push({ t: e.timeStamp, x: e.clientX, y: e.clientY });
+        if (samples.length > 6) samples.shift();
+        return;
+      }
+      if (performance.now() - boundsAt > 80) updateBounds();
+      const over = hit(e.clientX, e.clientY) && !(e.target.closest && e.target.closest(SKIP));
+      if (over !== overMachine) { overMachine = over; htmlEl.classList.toggle('over-machine', over); }
     }, { passive: true });
+
+    window.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      if (e.target.closest && e.target.closest(SKIP)) return;
+      updateBounds();
+      if (!hit(e.clientX, e.clientY)) return;
+      user.dragging = true;
+      // 抓住的瞬間：速度歸零（接手），原始拖曳量接續目前顯示的角度，不會跳
+      user.yawVel = 0; user.pitchVel = 0;
+      rawYaw = inverseRubber(user.yaw, YAW_LIMIT);
+      rawPitch = inverseRubber(user.pitch, PITCH_LIMIT);
+      samples = [{ t: e.timeStamp, x: e.clientX, y: e.clientY }];
+      htmlEl.classList.add('is-grabbing');
+      try { e.target.setPointerCapture(e.pointerId); } catch (err) { /* 沒有也沒關係 */ }
+      e.preventDefault(); // 不要選到文字
+    });
+
+    const release = (e) => {
+      if (!user.dragging) return;
+      user.dragging = false;
+      htmlEl.classList.remove('is-grabbing');
+      // 放開時的速度：取最近約 100ms 內的移動
+      const end = samples[samples.length - 1];
+      let from = samples[0];
+      for (const sm of samples) { if (end.t - sm.t <= 100) { from = sm; break; } }
+      const dtv = Math.max((end.t - from.t) / 1000, 0.016);
+      // 超過一小段時間沒動就放開 = 不是甩出去，速度歸零
+      const idle = ((e.timeStamp || end.t) - end.t) > 80;
+      user.yawVel = idle ? 0 : ((end.x - from.x) / dtv) * RAD_PER_PX;
+      user.pitchVel = idle ? 0 : ((end.y - from.y) / dtv) * RAD_PER_PX;
+      // 速度上限：避免一甩就轉好幾圈
+      user.yawVel = Math.max(-12, Math.min(12, user.yawVel));
+      user.pitchVel = Math.max(-8, Math.min(8, user.pitchVel));
+    };
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
+
+    // 彈簧：回到 0，帶著放手時的速度（速度交接）。阻尼 0.8 → 有一點彈，因為這是「甩出去」的動量；回應 0.7 秒。
+    const SPRING_W = (2 * Math.PI) / 0.7, SPRING_Z = 0.8;
+    function stepSpring(x, v, dt) {
+      // 半隱式歐拉，切成小步避免不穩定
+      const n = Math.max(1, Math.ceil(dt / 0.008)), h = dt / n;
+      for (let i = 0; i < n; i++) {
+        v += (-SPRING_W * SPRING_W * x - 2 * SPRING_Z * SPRING_W * v) * h;
+        x += v * h;
+      }
+      return [x, v];
+    }
 
     /* ---------- 每一幀 ---------- */
     const cur = Object.assign({}, target, { opacity: 0 });
@@ -345,7 +454,13 @@
       if (cur.opacity > 0.01 && !document.hidden) {
         stage.position.set(cur.x + mx * 0.25, cur.y - my * 0.15, 0);
         stage.scale.setScalar(cur.scale);
-        pose.rotation.set(cur.rotX + my * 0.08, cur.rotY + mx * 0.12, cur.rotZ);
+        if (!user.dragging && (user.yaw || user.pitch || user.yawVel || user.pitchVel)) {
+          [user.yaw, user.yawVel] = stepSpring(user.yaw, user.yawVel, dt);
+          [user.pitch, user.pitchVel] = stepSpring(user.pitch, user.pitchVel, dt);
+          if (Math.abs(user.yaw) < 1e-4 && Math.abs(user.yawVel) < 1e-3) { user.yaw = 0; user.yawVel = 0; }
+          if (Math.abs(user.pitch) < 1e-4 && Math.abs(user.pitchVel) < 1e-3) { user.pitch = 0; user.pitchVel = 0; }
+        }
+        pose.rotation.set(cur.rotX + my * 0.08 + user.pitch, cur.rotY + mx * 0.12 + user.yaw, cur.rotZ);
 
         spinA += dt * cur.spin;
         model.rotation.y = spinA;

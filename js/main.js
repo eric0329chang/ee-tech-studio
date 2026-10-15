@@ -1,6 +1,6 @@
 /* =============================================================
    EE Tech Studio — 全螢幕敘事
-   - 開場倒數 → 主標逐行浮上
+   - 首頁：主標逐行浮上（沒有人為的等待）
    - Lenis 平滑捲動 + GSAP ScrollTrigger
    - 服務：黏住畫面，捲動切換 4 個服務，3D 機械跟著拆開
    - 作品：黏住畫面，橫向滑過；流程：進度線 + 逐步點亮
@@ -29,12 +29,8 @@
   setupContactForm();
   setupMenu();
 
-  /* ---------- 沒有動畫的情況：直接收掉開場、照一般頁面走 ---------- */
+  /* ---------- 沒有動畫的情況（GSAP 載不到、或使用者要求減少動態）：照一般頁面走 ---------- */
   if (!FX) {
-    const intro = $('#intro');
-    if (intro) intro.classList.add('is-done');
-    if (window.EE_MACHINE) window.EE_MACHINE.set({ opacity: 0.9 });
-    $$('a[data-scroll]').forEach((a) => a.addEventListener('click', () => closeMenu()));
     return;
   }
 
@@ -64,7 +60,7 @@
       const sel = id === '#top' ? 'main' : id;
       if (!id || id.charAt(0) !== '#' || !$(sel)) return;
       e.preventDefault();
-      closeMenu();
+      closeMenu(false);
       scrollToTarget(sel);
     });
   });
@@ -78,28 +74,17 @@
   }
   const linesOf = (el) => (splits.get(el) ? splits.get(el).lines : [el]);
 
-  /* ---------- 開場 ---------- */
-  const intro = $('#intro');
+  /* ---------- 首頁進場：沒有人為的等待。字型好了（最多等 0.8 秒）主標就直接浮上來 ----------
+     Apple 的原則：延遲一出現，「直接操作」的感覺就垮了。倒數、載入動畫只是在讓人等。 */
   const heroTitleLines = linesOf($('.hero__title'));
   gsap.set(heroTitleLines, { yPercent: 110 });
-  gsap.set('.hero [data-reveal], .hero__meta', { opacity: 0, y: 24 });
-  const counter = { v: 0 };
-  const minTime = new Promise((r) => setTimeout(r, 1300));
+  gsap.set('.hero [data-reveal]', { opacity: 0, y: 24 });
   const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-  gsap.to(counter, {
-    v: 100, duration: 1.3, ease: 'power2.inOut',
-    onUpdate: () => {
-      $('#introCount').textContent = String(Math.round(counter.v)).padStart(3, '0');
-      $('#introBar').style.transform = `scaleX(${counter.v / 100})`;
-    },
-  });
-  Promise.race([Promise.all([minTime, fontsReady]), new Promise((r) => setTimeout(r, 3500))]).then(() => {
+  Promise.race([fontsReady, new Promise((r) => setTimeout(r, 800))]).then(() => {
     ScrollTrigger.refresh();
-    const tl = gsap.timeline();
-    tl.to(intro, { yPercent: -100, duration: 1, ease: 'expo.inOut' })
-      .set(intro, { display: 'none' })
-      .to(heroTitleLines, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, '-=0.45')
-      .to('.hero [data-reveal], .hero__meta', { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.08 }, '-=0.9');
+    gsap.timeline()
+      .to(heroTitleLines, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08 })
+      .to('.hero [data-reveal]', { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.08 }, '-=0.85');
   });
 
   /* ---------- 各章大標 + 一般元素：進畫面浮上，離開後重設（捲回來重播） ----------
@@ -150,7 +135,7 @@
 
   /* ---------- 章節狀態（導覽、右側進度、3D 位置） ---------- */
   const chapters = $$('.chapter');
-  const chapNo = $('#chapNo'), chapName = $('#chapName'), railFill = $('#railFill');
+  const chapNo = $('#chapNo'), chapName = $('#chapName');
   let lastChapter = null;
   const HALF_PI = Math.PI / 2;
 
@@ -163,8 +148,6 @@
   function update() {
     const vh = window.innerHeight;
     const small = isSmall();
-    const docH = document.documentElement.scrollHeight - vh;
-    railFill.style.transform = `scaleY(${clamp01(window.scrollY / Math.max(1, docH))})`;
 
     // 目前章節：畫面中線落在哪一章
     let current = chapters[0];
@@ -239,31 +222,34 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ScrollTrigger.refresh(); requestUpdate(); });
   update();
 
-  /* ---------- 選單 ---------- */
+  /* ---------- 選單 ----------
+     開關都是 CSS 轉場（彈簧），不是 JS 排好的動畫：轉到一半再點一下，會從「目前的位置」直接反向，
+     不用等它跑完——這就是「可以中斷」。關閉時用 inert，鍵盤和螢幕閱讀器都進不去。 */
   function setupMenu() {
     const btn = $('#menuBtn'), menu = $('#menu');
     if (!btn || !menu) return;
-    btn.addEventListener('click', () => (menu.hidden ? openMenu() : closeMenu()));
+    // e.detail === 0：不是滑鼠 / 手指點的（鍵盤的 Enter、空白鍵）。這時才把焦點移進選單；滑鼠和手指不需要焦點框
+    btn.addEventListener('click', (e) => (root.classList.contains('menu-open') ? closeMenu() : openMenu(e.detail === 0)));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+    $$('a', menu).forEach((a) => a.addEventListener('click', () => closeMenu(false)));
   }
-  function openMenu() {
+  function openMenu(byKeyboard) {
     const btn = $('#menuBtn'), menu = $('#menu');
-    menu.hidden = false;
     root.classList.add('menu-open');
+    menu.inert = false;
     btn.setAttribute('aria-expanded', 'true');
     btn.querySelector('.nav__menu-label').textContent = '關閉';
-    if (window.gsap && !reduced) {
-      window.gsap.fromTo(menu, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out' });
-      window.gsap.fromTo('.menu__list a', { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: 'expo.out', stagger: 0.05 });
-    }
+    const first = $('a', menu);
+    if (byKeyboard && first) first.focus({ preventScroll: true });
   }
-  function closeMenu() {
+  function closeMenu(returnFocus = true) {
     const btn = $('#menuBtn'), menu = $('#menu');
-    if (!menu || menu.hidden) return;
-    menu.hidden = true;
+    if (!menu || !root.classList.contains('menu-open')) return;
     root.classList.remove('menu-open');
+    menu.inert = true;
     btn.setAttribute('aria-expanded', 'false');
     btn.querySelector('.nav__menu-label').textContent = '選單';
+    if (returnFocus && document.activeElement && menu.contains(document.activeElement)) btn.focus({ preventScroll: true });
   }
 
   /* ---------- 聯絡表單（FormSubmit：送出後直接寄到 ee.techww@gmail.com，不用自己的後端） ----------

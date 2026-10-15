@@ -10,13 +10,14 @@
   <meta property="og:description" content="把想法變成會動的產品 — 網站・遊戲・視覺・數據，一站到位。" />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#08090b" />
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=202610112043" />
-  <link rel="apple-touch-icon" href="./favicon.svg?v=202610112043" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=202610151923" />
+  <link rel="apple-touch-icon" href="./favicon.svg?v=202610151923" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/style.css?v=202610112043" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/style.css?v=202610151923" />
   <!-- machine.js（3D）用的 Three.js 模組位置 -->
   <script type="importmap">
     { "imports": {
@@ -26,19 +27,10 @@
   </script>
 </head>
 <body>
-  <!-- 開場 -->
-  <div class="intro" id="intro" aria-hidden="true">
-    <div class="intro__row"><span class="intro__brand">EE — TECH STUDIO</span><span class="intro__count" id="introCount">000</span></div>
-    <div class="intro__bar"><span id="introBar"></span></div>
-  </div>
-
-  <div class="grain" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-
   <!-- 導覽 -->
   <header class="nav" id="nav">
     <a href="#top" class="nav__logo" data-scroll>EE<span>—</span>TECH</a>
-    <div class="nav__chapter" aria-hidden="true"><span id="chapNo">00</span><i></i><span id="chapName">開場</span></div>
+    <div class="nav__chapter" aria-hidden="true"><span id="chapNo">00</span><i></i><span id="chapName">首頁</span></div>
     <div class="nav__right">
       <a href="#contact" class="nav__cta" data-scroll>聯絡我們</a>
       <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">
@@ -48,9 +40,9 @@
   </header>
 
   <!-- 全螢幕選單 -->
-  <nav class="menu" id="menu" aria-label="章節" hidden>
+  <nav class="menu" id="menu" aria-label="章節" inert>
     <ol class="menu__list">
-      <li><a href="#top" data-scroll><span>00</span>開場</a></li>
+      <li><a href="#top" data-scroll><span>00</span>首頁</a></li>
       <li><a href="#services" data-scroll><span>01</span>服務</a></li>
       <li><a href="#work" data-scroll><span>02</span>作品</a></li>
       <li><a href="#process" data-scroll><span>03</span>合作流程</a></li>
@@ -63,15 +55,10 @@
     </div>
   </nav>
 
-  <!-- 右側章節進度 -->
-  <div class="rail" aria-hidden="true">
-    <span class="rail__fill" id="railFill"></span>
-  </div>
-
   <main id="top">
 
-    <!-- ===== 00 開場 ===== -->
-    <section class="chapter hero" id="hero" data-chapter="00" data-name="開場">
+    <!-- ===== 00 首頁 ===== -->
+    <section class="chapter hero" id="hero" data-chapter="00" data-name="首頁">
       <div class="hero__top">
         <p class="kicker"><span>00</span>互動體驗數位工作室</p>
       </div>
@@ -87,10 +74,6 @@
           <a href="#contact" class="btn btn--line" data-scroll>直接聊聊</a>
         </div>
       </div>
-      <div class="hero__meta" aria-hidden="true">
-        <span>WEB</span><span>GAME</span><span>VISUAL</span><span>DATA</span>
-      </div>
-      <div class="scrollcue" aria-hidden="true"><span>SCROLL</span><i></i></div>
     </section>
 
     <!-- ===== 01 服務（捲動敘事：一步一個服務，3D 跟著拆開） ===== -->
@@ -404,7 +387,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
-  <script src="./js/machine.js?v=202610112043"></script>
-  <script src="./js/main.js?v=202610112043"></script>
+  <script src="./js/machine.js?v=202610151923"></script>
+  <script src="./js/main.js?v=202610151923"></script>
 </body>
 </html>
