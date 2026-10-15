@@ -60,8 +60,8 @@
     camera.position.set(0, 0, 16);
 
     const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(-5, 7, 8); scene.add(key);
-    const rimA = new THREE.PointLight(0xc5f04a, 9, 18); rimA.position.set(6, 3, -3); scene.add(rimA);
-    const rimB = new THREE.PointLight(0x4d7cff, 18, 18); rimB.position.set(-6, -4, 2); scene.add(rimB);
+    const rimA = new THREE.PointLight(0x7fd8ff, 8, 18); rimA.position.set(6, 3, -3); scene.add(rimA);
+    const rimB = new THREE.PointLight(0xbfeaff, 12, 18); rimB.position.set(-6, -4, 2); scene.add(rimB);
 
     /* ---------- 材質 ---------- */
     const std = (o) => new THREE.MeshStandardMaterial(o);
@@ -72,16 +72,16 @@
       chrome: std({ color: 0xf1f3f6, metalness: 1, roughness: 0.06 }),
       blackOxide: std({ color: 0x16181c, metalness: 0.8, roughness: 0.45 }),   // 黑色螺絲
       copper: std({ color: 0xc27a45, metalness: 1, roughness: 0.28 }),
-      magnetA: std({ color: 0x8a2c3a, metalness: 0.6, roughness: 0.35 }),
-      magnetB: std({ color: 0x2c3f66, metalness: 0.6, roughness: 0.35 }),
-      blue: std({ color: 0x3d63e0, metalness: 0.85, roughness: 0.3 }),
-      lime: std({ color: 0xa9d63c, metalness: 0.7, roughness: 0.32 }),
+      magnetA: std({ color: 0x2f343c, metalness: 0.7, roughness: 0.35 }),    // 磁鐵：石墨灰與深冰藍交錯
+      magnetB: std({ color: 0x2a86b8, metalness: 0.65, roughness: 0.35 }),
+      iceDeep: std({ color: 0x2f9fd8, metalness: 0.85, roughness: 0.3 }),    // 太陽齒輪：深一階的冰藍陽極處理
+      ice: std({ color: 0x86d9fb, metalness: 0.7, roughness: 0.32 }),        // 行星齒輪：冰藍
       pcb: std({ color: 0x0d1f1a, metalness: 0.2, roughness: 0.7 }),
       gold: std({ color: 0xd4a94e, metalness: 1, roughness: 0.25 }),
       chip: std({ color: 0x101114, metalness: 0.3, roughness: 0.55 }),
       glass: new THREE.MeshStandardMaterial({ color: 0x9fd8ff, metalness: 0.2, roughness: 0.05, transparent: true, opacity: 0.32, depthWrite: false }),
       slot: std({ color: 0x0b0c0f, metalness: 0.4, roughness: 0.5 }),
-      glow: new THREE.MeshBasicMaterial({ color: 0xc5f04a }),
+      glow: new THREE.MeshBasicMaterial({ color: 0x5cc9fb }),
     };
     M.housing.side = THREE.DoubleSide;
     M.alu.side = THREE.DoubleSide;
@@ -238,10 +238,10 @@
     // L7–L8 第一段行星齒輪（內齒環 48、太陽 12、行星 18×3）
     const S1 = { ring: 48, sun: 12, planet: 18, r: 0.52 };
     add(mesh(ringGear(S1.ring, 1.2, 1.0, 0.92, 0.22), M.housing), 0.02, 7);
-    const sun1 = mesh(gear(S1.sun, 0.36, 0.3, 0.12, 0.24), M.blue);
+    const sun1 = mesh(gear(S1.sun, 0.36, 0.3, 0.12, 0.24), M.iceDeep);
     add(sun1, 0.02, 8);
     const planets1 = circle(3, S1.r).map(([x, z, a]) => {
-      const m = mesh(gear(S1.planet, 0.47, 0.41, 0.06, 0.22, circle(4, 0.24, 0.4).map(([hx, hy]) => [hx, hy, 0.05])), M.lime);
+      const m = mesh(gear(S1.planet, 0.47, 0.41, 0.06, 0.22, circle(4, 0.24, 0.4).map(([hx, hy]) => [hx, hy, 0.05])), M.ice);
       return { m, a0: a, p: add(m, 0.02, 8, { x, z, radial: 0.55 }), r: S1.r };
     });
     const carrier1 = mesh(gear(3, 0.95, 0.55, 0.14, 0.06), M.alu);
@@ -250,10 +250,10 @@
     // L9–L10 第二段行星齒輪（內齒環 54、太陽 14、行星 20×4）
     const S2 = { ring: 54, sun: 14, planet: 20, r: 0.6 };
     add(mesh(ringGear(S2.ring, 1.22, 1.07, 1.0, 0.24), M.housing), 0.42, 9);
-    const sun2 = mesh(gear(S2.sun, 0.42, 0.36, 0.12, 0.26), M.blue);
+    const sun2 = mesh(gear(S2.sun, 0.42, 0.36, 0.12, 0.26), M.iceDeep);
     add(sun2, 0.42, 10);
     const planets2 = circle(4, S2.r).map(([x, z, a]) => {
-      const m = mesh(gear(S2.planet, 0.46, 0.4, 0.06, 0.24), M.lime);
+      const m = mesh(gear(S2.planet, 0.46, 0.4, 0.06, 0.24), M.ice);
       return { m, a0: a, p: add(m, 0.42, 10, { x, z, radial: 0.5 }), r: S2.r };
     });
     const carrier2 = new THREE.Group();
